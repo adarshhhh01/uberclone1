@@ -1,179 +1,143 @@
-# Uber Clone
+# Uber Clone (MERN + Vite)
 
-This project is a full-stack web application that mimics the core functionalities of Uber. It is built using the MERN stack (MongoDB, Express.js, React, Node.js) and features separate frontend and backend applications.
+Full-stack ride-hailing clone built with a Node/Express API, MongoDB, Socket.IO, and a Vite + React frontend. It supports rider and captain (driver) flows, real-time ride events, and Mapbox-powered geo features.
 
 ## Features
 
-*   **User Authentication:** Secure registration and login for both riders and drivers.
-*   **Real-time Ride Booking:** Users can request rides, and available drivers can accept them.
-*   **Live Location Tracking:** See drivers on the map in real-time using geolocation.
-*   **Profile Management:** Users can view and update their profile information.
-*   **Ride History:** View past ride details and history.
-*   **Interactive Map Interface:** Built with a mapping service like Google Maps for an intuitive user experience.
+- Rider and captain authentication (register/login/logout)
+- Ride lifecycle: request, confirm, start (OTP), end, cancel
+- Real-time events via Socket.IO (new ride, ride confirmed/started/ended)
+- Mapbox utilities: geocoding, distance/time, and suggestions
+- Captain availability and live location updates
 
 ## Tech Stack
 
-### Backend
-
-*   **[Node.js](https://nodejs.org/)**: JavaScript runtime environment.
-*   **[Express.js](https://expressjs.com/)**: Web framework for Node.js to build RESTful APIs.
-*   **[MongoDB](https://www.mongodb.com/)**: NoSQL database to store user, driver, and ride data.
-*   **[Mongoose](https://mongoosejs.com/)**: Object Data Modeling (ODM) library for MongoDB and Node.js.
-*   **[JSON Web Tokens (JWT)](https://jwt.io/)**: For securing the APIs and managing user sessions.
-*   **[Socket.IO](https://socket.io/)**: For enabling real-time, bidirectional communication for location tracking and ride status updates.
-*   **[dotenv](https://www.npmjs.com/package/dotenv)**: To manage environment variables.
-
-### Frontend
-
-*   **[React.js](https://reactjs.org/)**: A JavaScript library for building user interfaces.
-*   **[React Router](https://reactrouter.com/)**: For declarative routing in the React application.
-*   **[Axios](https://axios-http.com/)**: Promise-based HTTP client for making API requests to the backend.
-*   **[Socket.IO Client](https://socket.io/docs/v4/client-api/)**: To connect to the backend for real-time updates.
-*   **[Google Maps API / Mapbox](https://developers.google.com/maps)**: For rendering maps and handling location services.
+- Backend: Node.js, Express, MongoDB/Mongoose, Socket.IO
+- Frontend: React 19, Vite, React Router
+- Maps: Mapbox (API + GL)
 
 ## Project Structure
 
-The project is organized into two main directories: `Frontend` and `Backend`.
-
 ```
 uberclone1/
-├── Backend/
-│   ├── controllers/  # Application logic
-│   ├── models/       # Mongoose schemas
-│   ├── routes/       # API routes
-│   ├── .env          # Environment variables
-│   └── server.js     # Express server entry point
-│
-└── Frontend/
-    ├── public/
-    ├── src/
-    │   ├── components/ # Reusable React components
-    │   ├── pages/      # Page components (Home, Login, etc.)
-    │   ├── services/   # API call functions
-    │   ├── App.js
-    │   └── index.js
-    └── .env            # Frontend environment variables
+|-- Backend/
+|   |-- controllers/
+|   |-- models/
+|   |-- routes/
+|   |-- services/
+|   |-- app.js
+|   |-- server.js
+|   `-- .env.example
+|-- Frontend/
+|   |-- src/
+|   |-- index.html
+|   |-- vite.config.js
+|   `-- .env.example
+|-- DEPLOYMENT.md
+`-- Readme.md
 ```
+
+## Requirements
+
+- Node.js 20+ (backend enforces this)
+- MongoDB connection string
+- Mapbox API token
 
 ## Environment Variables
 
-This project uses `.env` files to store sensitive information and configuration settings. You will need to create a `.env` file in both the `Backend` and `Frontend` directories.
+Create `.env` files from the examples.
 
-### Backend `.env`
-
-Create a file named `.env` in the `c:/Users/Addy/Desktop/uberclone1/Backend/` directory and add the following variables. Replace the placeholder values with your actual configuration.
+### Backend (`Backend/.env`)
 
 ```env
-# Backend/.env
-
-# Server Configuration
-PORT=5000
-
-# MongoDB Connection
-MONGO_URI=mongodb://localhost:27017/uberclone
-
-# JSON Web Token
-JWT_SECRET=your_super_secret_jwt_key
-
-# Google Maps API Key (or other mapping service)
-GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+PORT=3000
+DB_CONNECT=mongodb+srv://<username>:<password>@cluster.mongodb.net/<db-name>
+JWT_SECRET=replace_with_secure_secret
+MAPBOX_TOKEN=replace_with_mapbox_token
+CORS_ORIGIN=http://localhost:5173
+CAPTAIN_SEARCH_RADIUS_KM=5
 ```
 
-### Frontend `.env`
-
-Create a file named `.env` in the `c:/Users/Addy/Desktop/uberclone1/Frontend/` directory. For Create React App, variables must be prefixed with `REACT_APP_`.
+### Frontend (`Frontend/.env`)
 
 ```env
-# Frontend/.env
-
-# The URL of your backend server
-REACT_APP_API_URL=http://localhost:5000
-
-# Google Maps API Key for the frontend client
-REACT_APP_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+VITE_BASE_URL=http://localhost:3000
+VITE_MAPBOX_TOKEN=replace_with_mapbox_token
 ```
 
-## Installation and Setup
+## Local Development
 
-Follow these steps to get the application running on your local machine.
+### Backend
 
-### Prerequisites
+```sh
+npm --prefix Backend install
+npm --prefix Backend run dev
+```
 
-*   Node.js (v14 or later)
-*   npm or yarn
-*   MongoDB installed and running.
+API base URL: `http://localhost:3000`
 
-### Backend Setup
+Health check:
 
-1.  **Navigate to the backend directory:**
-    ```sh
-    cd c:/Users/Addy/Desktop/uberclone1/Backend
-    ```
+```sh
+GET /health -> { "status": "ok" }
+```
 
-2.  **Install dependencies:**
-    ```sh
-    npm install
-    ```
+### Frontend
 
-3.  **Create and populate the `.env` file** as described in the Backend `.env` section.
+```sh
+npm --prefix Frontend install
+npm --prefix Frontend run dev
+```
 
-4.  **Start the backend server:**
-    ```sh
-    npm start
-    ```
-    The server should now be running on `http://localhost:5000`.
+App URL: `http://localhost:5173`
 
-### Frontend Setup
+## API Overview
 
-1.  **Open a new terminal and navigate to the frontend directory:**
-    ```sh
-    cd c:/Users/Addy/Desktop/uberclone1/Frontend
-    ```
+Base path: `http://localhost:3000/api`
 
-2.  **Install dependencies:**
-    ```sh
-    npm install
-    ```
+### Users
 
-3.  **Create and populate the `.env` file** as described in the Frontend `.env` section.
+- `POST /users/register`
+- `POST /users/login`
+- `GET /users/profile`
+- `GET /users/logout`
 
-4.  **Start the React development server:**
-    ```sh
-    npm start
-    ```
-    The application should now be running and open in your browser at `http://localhost:3000`.
+### Captains
 
-## API Endpoints (Backend Routes)
+- `POST /captains/register`
+- `POST /captains/login`
+- `GET /captains/profile`
+- `GET /captains/stats`
+- `POST /captains/logout`
+- `PATCH /captains/location`
+- `PATCH /captains/status`
 
-The backend exposes the following REST API endpoints. These would be defined in `c:/Users/Addy/Desktop/uberclone1/Backend/routes/`.
+### Rides
 
-| Method | Endpoint                     | Description                               |
-| :----- | :--------------------------- | :---------------------------------------- |
-| `POST` | `/api/auth/register`         | Register a new user (rider or driver).    |
-| `POST` | `/api/auth/login`            | Authenticate a user and get a JWT token.  |
-| `GET` | `/api/users/profile`         | Get the profile of the logged-in user.    |
-| `PUT` | `/api/users/profile`         | Update the profile of the logged-in user. |
-| `POST` | `/api/rides/request`         | A rider requests a new ride.              |
-| `GET` | `/api/rides`                 | Get a list of rides for the current user. |
-| `GET` | `/api/rides/:id`             | Get details of a specific ride.           |
-| `PUT` | `/api/rides/:id/accept`      | A driver accepts a ride request.          |
-| `PUT` | `/api/rides/:id/status`      | Update the status of a ride (e.g., started, completed). |
-| `POST`| `/api/drivers/location`      | Update a driver's current location.       |
+- `POST /rides/create`
+- `GET /rides/get-fare`
+- `POST /rides/confirm`
+- `GET /rides/start-ride`
+- `POST /rides/end-ride`
+- `POST /rides/cancel-ride`
+- `GET /rides/current-ride`
 
-## Application Pages (Frontend Routes)
+### Maps
 
-The frontend contains the following pages, managed by React Router. These would be defined in `c:/Users/Addy/Desktop/uberclone1/Frontend/src/pages/`.
+- `GET /maps/get-coordinates`
+- `GET /maps/get-distance-time`
+- `GET /maps/get-suggestions`
 
-| Path              | Page Component      | Description                                       |
-| :---------------- | :------------------ | :------------------------------------------------ |
-| `/`               | `HomePage`          | Main page with the map, for booking and viewing rides. |
-| `/login`          | `LoginPage`         | User login page.                                  |
-| `/register`       | `RegisterPage`      | User registration page.                           |
-| `/profile`        | `ProfilePage`       | View and edit user profile.                       |
-| `/ride-history`   | `RideHistoryPage`   | Lists all past rides for the user.                |
-| `/ride/:id`       | `RideDetailPage`    | Shows the status and details of an active or past ride. |
+## Deployment
 
----
+For a complete step-by-step guide see `DEPLOYMENT.md`.
 
-*This README was generated by Gemini Code Assist. Feel free to update it with more specific details about your project's implementation.*
+### Quick Deploy Flow
 
+1. Backend: copy `Backend/.env.example` to `Backend/.env`, install with `npm --prefix Backend install`, then run `npm --prefix Backend start`.
+2. Frontend: copy `Frontend/.env.example` to `Frontend/.env`, set `VITE_BASE_URL` to your backend URL, install with `npm --prefix Frontend install`, build with `npm --prefix Frontend run build`, then deploy `Frontend/dist`.
+
+## Notes
+
+- CORS is configured via `CORS_ORIGIN` (comma-separated list).
+- Socket.IO is initialized in `Backend/socket.js`.
