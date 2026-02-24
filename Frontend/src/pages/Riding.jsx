@@ -70,12 +70,19 @@ const Riding = () => {
       navigate('/ride-cancelled', { state: { cancellation: data } })
     }
 
+    const onRideEnded = data => {
+      localStorage.removeItem('activeUserRide')
+      navigate('/ride-cancelled', { state: { completed: true, ride: data } })
+    }
+
     socket.on('captain-location-updated', onCaptainLocationUpdated)
     socket.on('ride-cancelled', onRideCancelled)
+    socket.on('ride-ended', onRideEnded)
 
     return () => {
       socket.off('captain-location-updated', onCaptainLocationUpdated)
       socket.off('ride-cancelled', onRideCancelled)
+      socket.off('ride-ended', onRideEnded)
     }
   }, [socket, rideData?._id, navigate])
 

@@ -71,10 +71,19 @@ const Home = () => {
         navigate('/ride-cancelled', { state: { cancellation: data } })
     })
 
+    socket.on('ride-ended', data => {
+        setVehicleFound(false)
+        setWaitingForDriver(false)
+        setRide(null)
+        localStorage.removeItem('activeUserRide')
+        navigate('/ride-cancelled', { state: { completed: true, ride: data } })
+    })
+
     return () => {
         socket.off('ride-confirmed')
         socket.off('ride-started')
         socket.off('ride-cancelled')
+        socket.off('ride-ended')
     }
 
 }, [socket, navigate])
