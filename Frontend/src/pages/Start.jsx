@@ -6,7 +6,7 @@ const Start = () => {
     <div>
       <div className="bg-no-repeat bg-cover position-relative  bg-[url(https://i.pinimg.com/1200x/70/c9/2b/70c92ba91bf8374152636f4b01362770.jpg)] bg-center h-screen pt-8  flex justify-between flex-col w-full ">
         <img
-          className=" w-30 ml-8 "
+          className=" w-[80px] ml-8 "
           src="https://i.pinimg.com/736x/2c/ea/3e/2cea3e7494f8f6f763216b708c21f4f2.jpg"
           alt=""
         />
